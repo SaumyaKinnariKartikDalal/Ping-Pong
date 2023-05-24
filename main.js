@@ -1,3 +1,6 @@
+rightwristx = 0;
+rightwristy = 0;
+scorerw = 0;
 
 /*created by prashant shukla */
 
@@ -28,9 +31,20 @@ function setup() {
   video.size(700, 600);
   video.hide();
 
-
   poseNet = ml5.poseNet(video, modelLoaded);
+  poseNet.on("pose", gotPoses);
+}
 
+function gotPoses(results) {
+	if (results.length>0) {
+		console.log(results);
+		rightwristx = results[0].pose.rightWrist.x;
+    console.log("rightwristx" + rightwristx);
+    rightwristy = results[0].pose.rightWrist.y;
+    console.log("rightwristy" + rightwristy);
+    scorerw = results[0].pose.keypoints[10].score;
+    console.log("scorerw" + scorerw);
+	}
 }
 
 function modelLoaded() {
@@ -41,8 +55,11 @@ function modelLoaded() {
 function draw() {
 
   image(video, 0, 0, 700, 600);
-
-
+  if (scorerw > 0.05) {
+    fill("red");
+    stroke("red");
+    circle(rightwristx, rightwristy, 10);
+  }
 
   fill("black");
   stroke("black");
@@ -59,7 +76,7 @@ function draw() {
   fill(250, 0, 0);
   stroke(0, 0, 250);
   strokeWeight(0.5);
-  paddle1Y = mouseY-55;
+  paddle1Y = mouseY;
   rect(paddle1X, paddle1Y, paddle1, paddle1Height, 100);
 
 
